@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,18 +6,25 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] float movementSpeed = 10f;
-    [SerializeField] float jumpForce = 5f;
+    [SerializeField] float movementSpeed = 0f;
+    [SerializeField] float jumpForce = 0f;
+    [SerializeField] Vector2 facingDirection;
 
-    [SerializeField] float fallMultiplier = 3f;
-    [SerializeField] float lowJumpMultiplier = 2.5f;
+    [SerializeField] float fallMultiplier = 0f;
+    [SerializeField] float lowJumpMultiplier = 0f;
     Rigidbody2D rb2d;
 
     bool isJumping = false;
     bool isOnGround = false;
 
+
+    [Header("Combat")]
+    [SerializeField] float attackRadius = 1f;
+
     [Header("Collision")]
     [SerializeField] float collisionRadius = 1f;
+
+    
 
 
     private void Awake()
@@ -27,19 +35,36 @@ public class Player : MonoBehaviour
     private void Update()
     {
         collision_check();
-
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-
+        Vector2 inputVec = Vector2.zero;
+        if (Input.GetKey(KeyCode.A))
+        {
+            inputVec = Vector2.left;
+            adjust_facing_direction(inputVec);
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            inputVec = Vector2.right;
+            adjust_facing_direction(inputVec);
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             jump();
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            attack();
+        }
 
         check_velocity();
-
-        Vector2 inputVec = new Vector2(x, y);
         move(inputVec);
+    }
+
+    private void adjust_facing_direction(Vector2 vector)
+    {
+        facingDirection = vector;
+        facingDirection.Normalize();
+        facingDirection.x = Mathf.Clamp(facingDirection.x, -1, 1);
+        facingDirection.y = Mathf.Clamp(facingDirection.y, -1, 1);
     }
 
     private void collision_check()
@@ -49,6 +74,16 @@ public class Player : MonoBehaviour
         if (isOnGround)
         {
             isJumping = false;
+        }
+    }
+    private void attack()
+    {
+        
+        LayerMask enemyLayer = LayerMask.GetMask("Enemy");
+        Collider2D enemy = Physics2D.OverlapCircle((Vector2)transform.position + facingDirection, attackRadius, enemyLayer);
+        if (enemy)
+        {
+            Debug.Log("damage");
         }
     }
 
@@ -76,6 +111,11 @@ public class Player : MonoBehaviour
             rb2d.velocity += Vector2.up * jumpForce;
             isJumping = true;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere((Vector2)transform.position + facingDirection, attackRadius);
     }
 
 }
