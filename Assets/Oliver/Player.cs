@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
@@ -27,20 +28,19 @@ public class Player : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] float attackRadius = 1f;
+    public int hitpoints = 3;
 
     [Header("Collision")]
     [SerializeField] float collisionRadius = 1f;
 
-    
+    [SerializeField] protected UnityEvent attackedEnemy;
 
 
-    private void Awake()
-    {
+    private void Awake(){
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
-    {
+    private void Update(){
         Vector2 prev_face_dir = facingDirection;
 
         if (Input.GetKey(KeyCode.A))
@@ -76,15 +76,13 @@ public class Player : MonoBehaviour
     /// <summary>
     /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
     /// </summary>
-    void FixedUpdate()
-    {
+    void FixedUpdate(){
         check_velocity();
         move();
         collision_check();
     }
 
-    private Vector2 adjust_facing_direction(Vector2 vector)
-    {
+    private Vector2 adjust_facing_direction(Vector2 vector){
         Vector2 face_dir = vector;
         face_dir.Normalize();
         face_dir.x = Mathf.Clamp(face_dir.x, -1f, 1f);
@@ -92,8 +90,7 @@ public class Player : MonoBehaviour
         return face_dir;
     }
 
-    private void collision_check()
-    {
+    private void collision_check(){
         LayerMask groundLayer = LayerMask.GetMask("Ground");
         isOnGround = Physics2D.OverlapCircle(transform.position, collisionRadius, groundLayer);
         if (isOnGround)
@@ -101,18 +98,17 @@ public class Player : MonoBehaviour
             isJumping = false;
         }
     }
-    private void attack()
-    {
+    private void attack(){
         LayerMask enemyLayer = LayerMask.GetMask("Enemy");
         Collider2D enemy = Physics2D.OverlapCircle((Vector2)transform.position + facingDirection, attackRadius, enemyLayer);
         if (enemy)
         {
+            attackedEnemy.Invoke();
             Debug.Log("damage");
         }
     }
 
-    private void check_velocity()
-    {
+    private void check_velocity(){
         if (rb2d.velocity.y < 0)
         {
             rb2d.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
@@ -123,13 +119,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void move()
-    {
+    private void move() {
         rb2d.velocity = new Vector2(facingDirection.x * currentMoveVelocity, rb2d.velocity.y);
     }
 
-    private void jump()
-    {
+    private void jump(){
         if (!isJumping && isOnGround)
         {
             rb2d.velocity += Vector2.up * jumpForce;
@@ -145,12 +139,13 @@ public class Player : MonoBehaviour
         }
         currentMoveVelocity = Mathf.Clamp(currentMoveVelocity, 0, maxMoveVelocity);
     }
-
+    public void take_damage(int damage){
+        hitpoints -= damage;
+    }
     /// <summary>
     /// Callback to draw gizmos only if the object is selected.
     /// </summary>
-    void OnDrawGizmosSelected()
-    {
+    void OnDrawGizmosSelected(){
         Gizmos.DrawSphere((Vector2)transform.position + facingDirection, attackRadius);
     }
 }
