@@ -2,17 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] float movementSpeed = 0f;
     [SerializeField] float jumpForce = 0f;
-    [SerializeField] Vector2 facingDirection;
+    [SerializeField] Vector2 facingDirection = Vector2.left;
 
+    Vector2 inputVec = Vector2.zero;
     [SerializeField] float fallMultiplier = 0f;
     [SerializeField] float lowJumpMultiplier = 0f;
     Rigidbody2D rb2d;
+    
+    private float movementAcceleration = 5f;
+    private float movementDeacceleration = 8f;
+    private float currentVelocity = 0f;
+    private float maxVelocity = 5.0f;
 
     bool isJumping = false;
     bool isOnGround = false;
@@ -35,16 +42,19 @@ public class Player : MonoBehaviour
     private void Update()
     {
         collision_check();
-        Vector2 inputVec = Vector2.zero;
+        Vector2 prev_face_dir = facingDirection;
         if (Input.GetKey(KeyCode.A))
         {
             inputVec = Vector2.left;
-            adjust_facing_direction(inputVec);
+            facingDirection = adjust_facing_direction(inputVec);
         }
-        if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D))
         {
             inputVec = Vector2.right;
-            adjust_facing_direction(inputVec);
+            facingDirection = adjust_facing_direction(inputVec);
+        }
+        else {
+            inputVec = Vector2.zero;
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -54,17 +64,21 @@ public class Player : MonoBehaviour
         {
             attack();
         }
-
+        if(prev_face_dir != facingDirection){
+            currentVelocity = 1f;
+        }
         check_velocity();
-        move(inputVec);
+        CalculateSpeed(inputVec);
+        move();
     }
 
-    private void adjust_facing_direction(Vector2 vector)
+    private Vector2 adjust_facing_direction(Vector2 vector)
     {
-        facingDirection = vector;
-        facingDirection.Normalize();
-        facingDirection.x = Mathf.Clamp(facingDirection.x, -1, 1);
-        facingDirection.y = Mathf.Clamp(facingDirection.y, -1, 1);
+        Vector2 face_dir = vector;
+        face_dir.Normalize();
+        face_dir.x = Mathf.Clamp(face_dir.x, -1, 1);
+        face_dir.y = Mathf.Clamp(facingDirection.y, -1, 1);
+        return face_dir;
     }
 
     private void collision_check()
@@ -99,9 +113,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void move(Vector2 input)
+    private void move()
     {
-        rb2d.velocity = new Vector2(input.x * movementSpeed, rb2d.velocity.y);
+        rb2d.velocity = new Vector2(facingDirection.x * currentVelocity, rb2d.velocity.y);
     }
 
     private void jump()
@@ -112,10 +126,19 @@ public class Player : MonoBehaviour
             isJumping = true;
         }
     }
+    private void CalculateSpeed(Vector2 vec) {
+        if(Mathf.Abs(vec.x) > 0){
+            currentVelocity += movementAcceleration * Time.deltaTime;
+        }
+        else {
+            currentVelocity -= movementDeacceleration * Time.deltaTime;
+        }
+        currentVelocity = Mathf.Clamp(currentVelocity, 0, maxVelocity);
+    }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawSphere((Vector2)transform.position + facingDirection, attackRadius);
+        
     }
-
 }
