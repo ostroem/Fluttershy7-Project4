@@ -9,10 +9,13 @@ public class ExitSceneObj : MonoBehaviour
     /// object (2D physics only).
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
+
+    [SerializeField] Vector2 exitPosition;
     void OnTriggerEnter2D(Collider2D other)
     {
         if(other.CompareTag("Player")){
             GameManager.Instance.SceneChanger.ChangeScene();
+            other.transform.position = exitPosition;
         }
     }
 
