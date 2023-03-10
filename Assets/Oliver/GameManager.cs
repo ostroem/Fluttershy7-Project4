@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set;}
     public SceneChange SceneChanger { get; private set; }
+
+    [Header("Player")]
+    public int hitpoints = 3;
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -19,8 +22,6 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        Debug.Log("awake");
-
     }
 
     /// <summary>
@@ -32,19 +33,16 @@ public class GameManager : MonoBehaviour
         SceneChanger = GetComponent<SceneChange>();
 
         SceneManager.activeSceneChanged += OnSceneChange;
-        Debug.Log("start");
     }
 
     /// <summary>
     /// This function is called when the MonoBehaviour will be destroyed.
     /// </summary>
-    void OnDestroy()
-    {
+    void OnDestroy(){
         SceneManager.activeSceneChanged -= OnSceneChange;
     }
 
     private void OnSceneChange(Scene sc, Scene sc1) {
-        Debug.Log("on scene change");
         SceneChanger = GetComponent<SceneChange>();
     }
 
