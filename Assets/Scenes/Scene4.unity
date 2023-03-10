@@ -636,6 +636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e011f6ef8e8b4948a6a360922cfa85b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  exitPosition: {x: -19, y: -3.5}
 --- !u!61 &1270178900
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -802,21 +803,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitpoints: 3
-  attackEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6390007486066684546, guid: 5632fd8a0b2a20d4d84039012d1587f3, type: 3}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: take_damage
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   attackDelay: 1.5
   visionRadius: 2
   attackRadius: 1
@@ -935,21 +921,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitpoints: 3
-  attackEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6390007486066684546, guid: 5632fd8a0b2a20d4d84039012d1587f3, type: 3}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: take_damage
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   facingDirection: {x: -1, y: 0}
   attackDelay: 1.5
   wanderDuration: 1.5
