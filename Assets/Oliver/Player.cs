@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     private CircleCollider2D energyCollider;
     [SerializeField] protected ParticleSystem energyParticles;
-    ParticleSystem.VelocityOverLifetimeModule particleVelocity;
+    ParticleSystem.VelocityOverLifetimeModule energyParticleVelocity;
 
     Vector2 inputVec = Vector2.zero;
     [SerializeField] float fallMultiplier = 2.5f;
@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
         energyCollider = gameObject.AddComponent<CircleCollider2D>();
         energyCollider.radius = collisionRadius;
         energyCollider.isTrigger = true;
-        particleVelocity = energyParticles.velocityOverLifetime;
+        energyParticleVelocity = energyParticles.velocityOverLifetime;
         DontDestroyOnLoad(gameObject);
     }
 
@@ -132,8 +132,8 @@ public class Player : MonoBehaviour
             Vector2 direction = enemy.transform.position - transform.position;
             Debug.Log("direction " + direction);
             //direction.Normalize();
-            particleVelocity.x = direction.x;
-            particleVelocity.y = direction.y;
+            energyParticleVelocity.x = direction.x;
+            energyParticleVelocity.y = direction.y;
             // set particle effect direction to be this direction
             
 
@@ -141,8 +141,8 @@ public class Player : MonoBehaviour
             energyValue += incrementalEnergy;
         }
         else {
-            particleVelocity.x = 0;
-            particleVelocity.y = 0;
+            energyParticleVelocity.x = 0;
+            energyParticleVelocity.y = 0;
         }
         // else
         // nothing
