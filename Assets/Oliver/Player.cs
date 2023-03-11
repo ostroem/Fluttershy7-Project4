@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
     private float maxEnergy = 100f;
     [SerializeField] protected float incrementalEnergy = 0.1f;
     [SerializeField] protected float decrementalEnergy = 10.0f;
-    private int hitpoints = 3;
+    [SerializeField] private int hitpoints = 3;
     
     private CircleCollider2D energyCollider;
     [SerializeField] protected ParticleSystem energyParticles;
@@ -195,10 +195,10 @@ public class Player : MonoBehaviour
                 return;
             }
 
-            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex++];
             if(animationSpriteIndex >= leftWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
             }
+            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex++];
         }
         else if(facingDirection.x > 0){
             // player right sprite
@@ -207,10 +207,10 @@ public class Player : MonoBehaviour
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
-            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex++];
             if(animationSpriteIndex >= rightWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
             }
+            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex++];
         }
         elapsedAnimationUpdateRate = 0f;
     }
