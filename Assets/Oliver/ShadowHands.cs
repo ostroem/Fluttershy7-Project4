@@ -90,11 +90,7 @@ void Awake()
     private void attack() {
         player.take_damage(1);
     }
-
-    /// <summary>
-    /// Callback to draw gizmos that are pickable and always drawn.
-    /// </summary>
-    void OnDrawGizmos()
+    void OnDrawGizmosSelected()
     {
         if(state == State.Attack){
             Gizmos.color = Color.red;
