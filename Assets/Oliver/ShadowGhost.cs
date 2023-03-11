@@ -111,11 +111,8 @@ public class ShadowGhost : Enemy
         facingDirection.x = playerPos.x - transform.position.x;
         facingDirection.Normalize();
     }
-
-    /// <summary>
-    /// Callback to draw gizmos that are pickable and always drawn.
-    /// </summary>
-    void OnDrawGizmos()
+    
+    void OnDrawGizmosSelected()
     {
         if(state == State.Attack){
             Gizmos.color = Color.red;

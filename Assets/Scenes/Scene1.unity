@@ -155,6 +155,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &573742783 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8632550063098294953, guid: 2f5ff07a778da444b9b0a077bb498278, type: 3}
+  m_PrefabInstance: {fileID: 8632550063481726608}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &587636489
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,7 +321,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 647217354}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -398,7 +409,7 @@ ParticleSystem:
   m_GameObject: {fileID: 647217354}
   serializedVersion: 8
   lengthInSec: 3
-  simulationSpeed: 1.5
+  simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -641,7 +652,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.25
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1025,7 +1036,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 1, y: 0.25, z: 0}
+    m_Scale: {x: 0.44, y: 0.19391999, z: 0}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -1223,7 +1234,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 25
+      scalar: 40
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1846,7 +1857,7 @@ ParticleSystem:
     x:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -6163,8 +6174,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_SortingOrder: 3
+  m_Sprite: {fileID: 21300000, guid: 6f3e8ecfab549c449b725bad7ba9bf6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -6221,18 +6232,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForce: 6
   facingDirection: {x: -1, y: 0}
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
+  attackRadius: 0.5
   energyValue: 50
   incrementalEnergy: 1
   decrementalEnergy: 10
   energyParticles: {fileID: 647217357}
-  fallMultiplier: 2.5
-  lowJumpMultiplier: 2
-  attackRadius: 0.5
-  hitpoints: 3
   collisionRadius: 1
-  attackedEnemy:
-    m_PersistentCalls:
-      m_Calls: []
+  energyRadius: 4
   leftWalkSprites:
   - {fileID: 21300000, guid: 721254eb5d0ed3346b7b5556bd5d5ed5, type: 3}
   - {fileID: 21300000, guid: 42e563f7a2a562a4e8aa38632a0a40ab, type: 3}
@@ -6243,6 +6251,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 89814b9b6cb49d14fb48bf8bf6978ba7, type: 3}
   - {fileID: 21300000, guid: c20b4ea4af7ae7842ad6df7597296e03, type: 3}
   idleSprite: {fileID: 21300000, guid: d160b476254cb4842a8c975b7a2ae5de, type: 3}
+  energyImage: {fileID: 573742783}
 --- !u!212 &6390007484877106860
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6283,7 +6292,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: d160b476254cb4842a8c975b7a2ae5de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

@@ -15,32 +15,34 @@ public class Player : MonoBehaviour
     private float currentMoveVelocity = 0f;
     private float maxMoveVelocity = 4f;
 
-    [SerializeField] protected int energyValue = 50;
-    [SerializeField] protected int incrementalEnergy = 1;
-    [SerializeField] protected int decrementalEnergy = 10;
 
-    private CircleCollider2D energyCollider;
-    [SerializeField] protected ParticleSystem energyParticles;
-    ParticleSystem.VelocityOverLifetimeModule energyParticleVelocity;
 
-    Vector2 inputVec = Vector2.zero;
+    private Vector2 inputVec = Vector2.zero;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpMultiplier = 2f;
+    private bool isJumping = false;
+    private bool isOnGround = false;
     private Rigidbody2D rb2d;
-    
-
-    bool isJumping = false;
-    bool isOnGround = false;
 
 
     [Header("Combat")]
     [SerializeField] float attackRadius = 0.5f;
-    public int hitpoints = 3;
+    [SerializeField] protected float energyValue = 50f;
+    private float maxEnergy = 100f;
+    [SerializeField] protected float incrementalEnergy = 0.1f;
+    [SerializeField] protected float decrementalEnergy = 10.0f;
+    private int hitpoints = 3;
+    
+    private CircleCollider2D energyCollider;
+    [SerializeField] protected ParticleSystem energyParticles;
+    ParticleSystem.VelocityOverLifetimeModule energyParticleVelocity;
 
     [Header("Collision")]
     [SerializeField] float collisionRadius = 1f;
+    [SerializeField] float energyRadius = 4f;
 
-    [SerializeField] protected UnityEvent attackedEnemy;
+    protected UnityEvent attackedEnemy;
+    [Header("Sprites and Animation")]
     [SerializeField] protected Sprite[] leftWalkSprites;
     [SerializeField] protected Sprite[] rightWalkSprites;
     [SerializeField] protected Sprite[] jumpingSprites;
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour
     private float animationUpdateRate = 0.12f;
     private float elapsedAnimationUpdateRate = 0f;
     private SpriteRenderer spriteRenderer;
+    [SerializeField] protected Image energyImage;
 
 
     private void Awake(){
@@ -58,6 +61,7 @@ public class Player : MonoBehaviour
         energyCollider.radius = collisionRadius;
         energyCollider.isTrigger = true;
         energyParticleVelocity = energyParticles.velocityOverLifetime;
+        update_energy_bar(energyValue);
         DontDestroyOnLoad(gameObject);
     }
 
@@ -79,6 +83,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && energyValue > 0){
             attack();
             energyValue -= decrementalEnergy;
+            update_energy_bar(energyValue);
         }
         if (Input.GetKeyDown(KeyCode.Space)){
             jump();
@@ -124,15 +129,18 @@ public class Player : MonoBehaviour
     private void take_energy() {
         LayerMask enemyLayer = LayerMask.GetMask("Enemy");
         if(energyCollider.IsTouchingLayers(enemyLayer)){
-            Collider2D enemy = Physics2D.OverlapCircle(transform.position, collisionRadius, enemyLayer);
+            Collider2D enemy = Physics2D.OverlapCircle(transform.position, energyRadius, enemyLayer);
             Vector2 direction = enemy.transform.position - transform.position;
             Debug.Log("direction " + direction);
-            energyParticleVelocity.x = direction.x;
-            energyParticleVelocity.y = direction.y;
+            energyParticleVelocity.x = direction.x * 2;
+            energyParticleVelocity.y = direction.y * 2;
             
 
             Debug.Log("touching enemy layer");
-            energyValue += incrementalEnergy;
+            if(energyValue < maxEnergy){
+                energyValue += incrementalEnergy;
+            }
+            update_energy_bar(energyValue);
         }
         else {
             energyParticleVelocity.x = 0;
@@ -199,5 +207,9 @@ public class Player : MonoBehaviour
         }
 
         elapsedAnimationUpdateRate = 0f;
+    }
+
+    private void update_energy_bar(float energy) {
+        energyImage.fillAmount = energy / 100f;
     }
 }
