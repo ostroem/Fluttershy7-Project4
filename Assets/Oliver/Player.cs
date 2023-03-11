@@ -188,24 +188,30 @@ public class Player : MonoBehaviour
         if(inputVec == Vector2.zero){
             spriteRenderer.sprite = idleSprite;
         }
-        else if(facingDirection == Vector2.left){
-            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex];
+        else if(facingDirection.x < 0){
+            if(rb2d.velocity.y > 1) {
+                spriteRenderer.sprite = jumpingSprites[0];
+                elapsedAnimationUpdateRate = 0f;
+                return;
+            }
+
+            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex++];
             if(animationSpriteIndex >= leftWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
+            }
+        }
+        else if(facingDirection.x > 0){
+            // player right sprite
+            if(rb2d.velocity.y > 1) {
+                spriteRenderer.sprite = jumpingSprites[1];
+                elapsedAnimationUpdateRate = 0f;
                 return;
             }
-            animationSpriteIndex++;
-        }
-        else if(facingDirection == Vector2.right){
-            // player right sprite
-            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex];
+            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex++];
             if(animationSpriteIndex >= rightWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
-                return;
             }
-            animationSpriteIndex++;
         }
-
         elapsedAnimationUpdateRate = 0f;
     }
 
