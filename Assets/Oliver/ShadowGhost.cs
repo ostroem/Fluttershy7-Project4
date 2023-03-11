@@ -24,14 +24,20 @@ public class ShadowGhost : Enemy
     State state;
     private Vector2 playerPos;
     Player player;
-/// <summary>
-/// Awake is called when the script instance is being loaded.
-/// </summary>
-void Awake()
-{
-    player = FindObjectOfType<Player>();
-    attackEvent += attack;
-}
+
+    [SerializeField]protected Sprite[] leftSprites;
+    [SerializeField]protected Sprite[] rightSprites;
+    [SerializeField]protected Sprite idleSprite;
+    private SpriteRenderer spriteRenderer;
+    private int animationSpriteIndex;
+    private float animationUpdateRate = 0.12f;
+    private float elapsedAnimationUpdateRate = 0f;
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        player = FindObjectOfType<Player>();
+        attackEvent += attack;
+    }
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
@@ -43,6 +49,7 @@ void Awake()
             Destroy(this.gameObject);
         }
         elapsedTime += Time.deltaTime;
+        elapsedAnimationUpdateRate += Time.deltaTime;
         switch(state){
             case State.Idle:
             if(elapsedTime >= idleUpdateFreq){
@@ -77,6 +84,7 @@ void Awake()
             transform.position = Vector2.Lerp(transform.position, newPos, Time.deltaTime * 1f);
             break;
         }
+        update_sprites();
     }
 
     private void attack() {
@@ -102,13 +110,6 @@ void Awake()
         }
         facingDirection.x = playerPos.x - transform.position.x;
         facingDirection.Normalize();
-
-        if(facingDirection.x < 0){
-            GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        if(facingDirection.x > 0){
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        }
     }
 
     /// <summary>
@@ -125,6 +126,29 @@ void Awake()
             Gizmos.DrawSphere(transform.position, visionRadius);
         }
 
+    }
+
+    private void update_sprites() {
+        if(state == State.Idle){
+            spriteRenderer.sprite = idleSprite;
+        }
+        else if(facingDirection == Vector2.left){
+            spriteRenderer.sprite = leftSprites[animationSpriteIndex];
+            if(animationSpriteIndex >= leftSprites.Length - 1){
+                animationSpriteIndex = 0;
+                return;
+            }
+            animationSpriteIndex ++;
+        }
+        else if(facingDirection == Vector2.right){
+            spriteRenderer.sprite = rightSprites[animationSpriteIndex];
+            if(animationSpriteIndex >= rightSprites.Length - 1){
+                animationSpriteIndex = 0;
+                return;
+            }
+            animationSpriteIndex ++;
+        }
+        elapsedAnimationUpdateRate = 0f;
     }
 
 }

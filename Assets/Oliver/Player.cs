@@ -41,10 +41,19 @@ public class Player : MonoBehaviour
     [SerializeField] float collisionRadius = 1f;
 
     [SerializeField] protected UnityEvent attackedEnemy;
+    [SerializeField] protected Sprite[] leftWalkSprites;
+    [SerializeField] protected Sprite[] rightWalkSprites;
+    [SerializeField] protected Sprite[] jumpingSprites;
+    [SerializeField] protected Sprite idleSprite;
+    private int animationSpriteIndex = 0;
+    private float animationUpdateRate = 0.12f;
+    private float elapsedAnimationUpdateRate = 0f;
+    private SpriteRenderer spriteRenderer;
 
 
     private void Awake(){
         rb2d = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         energyCollider = gameObject.AddComponent<CircleCollider2D>();
         energyCollider.radius = collisionRadius;
         energyCollider.isTrigger = true;
@@ -53,15 +62,13 @@ public class Player : MonoBehaviour
     }
 
     private void Update(){
+        elapsedAnimationUpdateRate += Time.deltaTime;
         Vector2 prev_face_dir = facingDirection;
-
-        if (Input.GetKey(KeyCode.A))
-        {
+        if (Input.GetKey(KeyCode.A)) {
             inputVec = Vector2.left;
             facingDirection = adjust_facing_direction(inputVec);
         }
-        else if (Input.GetKey(KeyCode.D))
-        {
+        else if (Input.GetKey(KeyCode.D)){
             inputVec = Vector2.right;
             facingDirection = adjust_facing_direction(inputVec);
         }
@@ -69,26 +76,21 @@ public class Player : MonoBehaviour
             inputVec = Vector2.zero;
         }
 
-        if (Input.GetMouseButtonUp(0) && energyValue > 0)
-        {
+        if (Input.GetMouseButtonUp(0) && energyValue > 0){
             attack();
             energyValue -= decrementalEnergy;
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
+        if (Input.GetKeyDown(KeyCode.Space)){
             jump();
         }
-        take_energy();
         if(prev_face_dir != facingDirection){
             currentMoveVelocity = 1f;
         }
         CalculateSpeed(inputVec);
-
+        take_energy();
+        update_player_sprite();
     }
 
-    /// <summary>
-    /// This function is called every fixed framerate frame, if the MonoBehaviour is enabled.
-    /// </summary>
     void FixedUpdate(){
         check_velocity();
         move();
@@ -106,35 +108,27 @@ public class Player : MonoBehaviour
     private void collision_check(){
         LayerMask groundLayer = LayerMask.GetMask("Ground");
         isOnGround = Physics2D.OverlapCircle(transform.position, collisionRadius, groundLayer);
-        if (isOnGround)
-        {
+        if (isOnGround) {
             isJumping = false;
         }
     }
     private void attack(){
         LayerMask enemyLayer = LayerMask.GetMask("Enemy");
         Collider2D enemy = Physics2D.OverlapCircle((Vector2)transform.position + facingDirection, attackRadius, enemyLayer);
-        if (enemy)
-        {
+        if (enemy) {
             enemy.GetComponent<Enemy>().take_damage(1);
             Debug.Log("damage");
         }
     }
 
     private void take_energy() {
-        // when enemy is near energyCollider
-        // we gain energy
         LayerMask enemyLayer = LayerMask.GetMask("Enemy");
-
-
         if(energyCollider.IsTouchingLayers(enemyLayer)){
             Collider2D enemy = Physics2D.OverlapCircle(transform.position, collisionRadius, enemyLayer);
             Vector2 direction = enemy.transform.position - transform.position;
             Debug.Log("direction " + direction);
-            //direction.Normalize();
             energyParticleVelocity.x = direction.x;
             energyParticleVelocity.y = direction.y;
-            // set particle effect direction to be this direction
             
 
             Debug.Log("touching enemy layer");
@@ -144,19 +138,13 @@ public class Player : MonoBehaviour
             energyParticleVelocity.x = 0;
             energyParticleVelocity.y = 0;
         }
-        // else
-        // nothing
-
-
     }
 
     private void check_velocity(){
-        if (rb2d.velocity.y < 0)
-        {
+        if (rb2d.velocity.y < 0){
             rb2d.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f) * Time.deltaTime;
         }
-        else if (rb2d.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
-        {
+        else if (rb2d.velocity.y > 0 && !Input.GetKey(KeyCode.Space)){
             rb2d.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1f) * Time.deltaTime;
         }
     }
@@ -166,8 +154,7 @@ public class Player : MonoBehaviour
     }
 
     private void jump(){
-        if (!isJumping && isOnGround)
-        {
+        if (!isJumping && isOnGround){
             rb2d.velocity += Vector2.up * jumpForce;
             isJumping = true;
         }
@@ -184,10 +171,33 @@ public class Player : MonoBehaviour
     public void take_damage(int damage){
         hitpoints -= damage;
     }
-    /// <summary>
-    /// Callback to draw gizmos only if the object is selected.
-    /// </summary>
-    void OnDrawGizmosSelected(){
-        Gizmos.DrawSphere((Vector2)transform.position + facingDirection, attackRadius);
+
+    public void update_player_sprite() {
+        if(elapsedAnimationUpdateRate < animationUpdateRate){
+            return;
+        }
+                
+        if(inputVec == Vector2.zero){
+            spriteRenderer.sprite = idleSprite;
+        }
+        else if(facingDirection == Vector2.left){
+            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex];
+            if(animationSpriteIndex >= leftWalkSprites.Length - 1){
+                animationSpriteIndex = 0;
+                return;
+            }
+            animationSpriteIndex++;
+        }
+        else if(facingDirection == Vector2.right){
+            // player right sprite
+            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex];
+            if(animationSpriteIndex >= rightWalkSprites.Length - 1){
+                animationSpriteIndex = 0;
+                return;
+            }
+            animationSpriteIndex++;
+        }
+
+        elapsedAnimationUpdateRate = 0f;
     }
 }
