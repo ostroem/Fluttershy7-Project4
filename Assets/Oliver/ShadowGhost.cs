@@ -126,6 +126,10 @@ public class ShadowGhost : Enemy
     }
 
     private void update_sprites() {
+        if(elapsedAnimationUpdateRate < animationUpdateRate){
+            return;
+        }
+
         if(state == State.Idle){
             spriteRenderer.sprite = idleSprite;
         }
@@ -133,6 +137,7 @@ public class ShadowGhost : Enemy
             spriteRenderer.sprite = leftSprites[animationSpriteIndex];
             if(animationSpriteIndex >= leftSprites.Length - 1){
                 animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
                 return;
             }
             animationSpriteIndex ++;
@@ -141,6 +146,7 @@ public class ShadowGhost : Enemy
             spriteRenderer.sprite = rightSprites[animationSpriteIndex];
             if(animationSpriteIndex >= rightSprites.Length - 1){
                 animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
                 return;
             }
             animationSpriteIndex ++;
