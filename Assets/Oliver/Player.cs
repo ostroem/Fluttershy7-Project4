@@ -15,8 +15,6 @@ public class Player : MonoBehaviour
     private float currentMoveVelocity = 0f;
     private float maxMoveVelocity = 4f;
 
-
-
     private Vector2 inputVec = Vector2.zero;
     [SerializeField] float fallMultiplier = 2.5f;
     [SerializeField] float lowJumpMultiplier = 2f;
@@ -36,6 +34,8 @@ public class Player : MonoBehaviour
     private CircleCollider2D energyCollider;
     [SerializeField] protected ParticleSystem energyParticles;
     ParticleSystem.VelocityOverLifetimeModule energyParticleVelocity;
+    [SerializeField] protected ParticleSystem hitParticles;
+    ParticleSystem.VelocityOverLifetimeModule hitParticleVelocity;
 
     [Header("Collision")]
     [SerializeField] float collisionRadius = 1f;
@@ -122,6 +122,13 @@ public class Player : MonoBehaviour
         Collider2D enemy = Physics2D.OverlapCircle((Vector2)transform.position + facingDirection, attackRadius, enemyLayer);
         if (enemy) {
             enemy.GetComponent<Enemy>().take_damage(1);
+            if(facingDirection.x > 0){
+            hitParticles.transform.SetLocalPositionAndRotation(new Vector3(0.5f, 0, -1), Quaternion.Euler(0, 0, -45));
+            }
+            if(facingDirection.x < 0){
+                hitParticles.transform.SetLocalPositionAndRotation(new Vector3(-0.5f, 0, -1), Quaternion.Euler(0, 0, -225));
+            }
+            hitParticles.Play();
             Debug.Log("damage");
         }
     }
