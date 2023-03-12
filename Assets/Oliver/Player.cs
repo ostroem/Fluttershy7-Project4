@@ -25,10 +25,10 @@ public class Player : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] float attackRadius = 0.5f;
-    [SerializeField] protected float energyValue = 50f;
+    private float energyValue = 50f;
     private float maxEnergy = 100f;
-    [SerializeField] protected float incrementalEnergy = 0.1f;
-    [SerializeField] protected float decrementalEnergy = 10.0f;
+    private float incrementalEnergy = 0.1f;
+    private float decrementalEnergy = 10.0f;
     [SerializeField] private int hitpoints = 3;
     
     private CircleCollider2D energyCollider;
@@ -55,7 +55,16 @@ public class Player : MonoBehaviour
     [SerializeField] protected Image energyImage;
     private int collectedHeartPieces = 0;
     private int maxCollectedHeartPieces = 3;
+    [SerializeField] protected AudioSource hitSound;
+    [SerializeField] protected AudioSource attackSound;
+    [SerializeField] protected GameObject lostPanel;
 
+    enum State {
+        Playing,
+        Lost,
+        Win
+    }
+    State state;
 
     private void Awake(){
         rb2d = GetComponent<Rigidbody2D>();
@@ -66,37 +75,52 @@ public class Player : MonoBehaviour
         energyParticleVelocity = energyParticles.velocityOverLifetime;
         update_energy_bar(energyValue);
         DontDestroyOnLoad(gameObject);
+        state = State.Playing;
     }
-
+    
     private void Update(){
-        elapsedAnimationUpdateRate += Time.deltaTime;
-        Vector2 prev_face_dir = facingDirection;
-        if (Input.GetKey(KeyCode.A)) {
-            inputVec = Vector2.left;
-            facingDirection = adjust_facing_direction(inputVec);
-        }
-        else if (Input.GetKey(KeyCode.D)){
-            inputVec = Vector2.right;
-            facingDirection = adjust_facing_direction(inputVec);
-        }
-        else {
-            inputVec = Vector2.zero;
+
+        if(hitpoints <= 0){
+            state = State.Lost;
         }
 
-        if (Input.GetMouseButtonUp(0) && energyValue > 0){
-            attack();
-            energyValue -= decrementalEnergy;
-            update_energy_bar(energyValue);
+        switch(state){
+            case State.Playing:
+                elapsedAnimationUpdateRate += Time.deltaTime;
+                Vector2 prev_face_dir = facingDirection;
+                if (Input.GetKey(KeyCode.A)) {
+                    inputVec = Vector2.left;
+                    facingDirection = adjust_facing_direction(inputVec);
+                }
+                else if (Input.GetKey(KeyCode.D)){
+                    inputVec = Vector2.right;
+                    facingDirection = adjust_facing_direction(inputVec);
+                }
+                else {
+                    inputVec = Vector2.zero;
+                }
+
+                if (Input.GetMouseButtonUp(0) && energyValue > 0){
+                    attack();
+                    energyValue -= decrementalEnergy;
+                    update_energy_bar(energyValue);
+                }
+                if (Input.GetKeyDown(KeyCode.Space)){
+                    jump();
+                }
+                if(prev_face_dir != facingDirection){
+                    currentMoveVelocity = 1f;
+                }
+                CalculateSpeed(inputVec);
+                take_energy();
+                update_player_sprite();
+            break;
+            case State.Lost:
+                lostPanel.SetActive(true);
+            break;
+            case State.Win:
+            break;
         }
-        if (Input.GetKeyDown(KeyCode.Space)){
-            jump();
-        }
-        if(prev_face_dir != facingDirection){
-            currentMoveVelocity = 1f;
-        }
-        CalculateSpeed(inputVec);
-        take_energy();
-        update_player_sprite();
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -105,9 +129,10 @@ public class Player : MonoBehaviour
             // display the new heart
             heartPieces[collectedHeartPieces].SetActive(true);
             //increase var for collected heart pieces
-            collectedHeartPieces++;
+            if(collectedHeartPieces < maxCollectedHeartPieces){
+                collectedHeartPieces++;
+            }
             Destroy(other.collider.gameObject);
-            Debug.Log("received a heartpiece");
         }
     }
 
@@ -144,7 +169,10 @@ public class Player : MonoBehaviour
                 hitParticles.transform.SetLocalPositionAndRotation(new Vector3(-0.5f, 0, -1), Quaternion.Euler(0, 0, -225));
             }
             hitParticles.Play();
-            Debug.Log("damage");
+            hitSound.Play();
+        }
+        else {
+            attackSound.Play();
         }
     }
 
@@ -153,7 +181,6 @@ public class Player : MonoBehaviour
         if(energyCollider.IsTouchingLayers(enemyLayer)){
             Collider2D enemy = Physics2D.OverlapCircle(transform.position, energyRadius, enemyLayer);
             Vector2 direction = enemy.transform.position - transform.position;
-            Debug.Log("direction " + direction);
             energyParticleVelocity.x = direction.x * 2;
             energyParticleVelocity.y = direction.y * 2;
             
