@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
     [Header("Collision")]
     [SerializeField] float collisionRadius = 1f;
-    [SerializeField] float energyRadius = 4f;
+    [SerializeField] float energyRadius = 2f;
 
     protected UnityEvent attackedEnemy;
     [Header("Sprites and Animation")]
@@ -47,18 +47,21 @@ public class Player : MonoBehaviour
     [SerializeField] protected Sprite[] rightWalkSprites;
     [SerializeField] protected Sprite[] jumpingSprites;
     [SerializeField] protected Sprite idleSprite;
+    [SerializeField] protected GameObject[] heartPieces;
     private int animationSpriteIndex = 0;
     private float animationUpdateRate = 0.12f;
     private float elapsedAnimationUpdateRate = 0f;
     private SpriteRenderer spriteRenderer;
     [SerializeField] protected Image energyImage;
+    private int collectedHeartPieces = 0;
+    private int maxCollectedHeartPieces = 3;
 
 
     private void Awake(){
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         energyCollider = gameObject.AddComponent<CircleCollider2D>();
-        energyCollider.radius = collisionRadius;
+        energyCollider.radius = energyRadius;
         energyCollider.isTrigger = true;
         energyParticleVelocity = energyParticles.velocityOverLifetime;
         update_energy_bar(energyValue);
@@ -94,6 +97,18 @@ public class Player : MonoBehaviour
         CalculateSpeed(inputVec);
         take_energy();
         update_player_sprite();
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if(other.collider.CompareTag("HeartPiece")){
+            // display the new heart
+            heartPieces[collectedHeartPieces].SetActive(true);
+            //increase var for collected heart pieces
+            collectedHeartPieces++;
+            Destroy(other.collider.gameObject);
+            Debug.Log("received a heartpiece");
+        }
     }
 
     void FixedUpdate(){
