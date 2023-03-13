@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -27,8 +28,8 @@ public class Player : MonoBehaviour
     [SerializeField] float attackRadius = 0.5f;
     private float energyValue = 50f;
     private float maxEnergy = 100f;
-    private float incrementalEnergy = 0.1f;
-    private float decrementalEnergy = 10.0f;
+    private float incrementalEnergy = 0.2f;
+    private float decrementalEnergy = 6.0f;
     [SerializeField] private int hitpoints = 3;
     
     private CircleCollider2D energyCollider;
@@ -43,10 +44,25 @@ public class Player : MonoBehaviour
 
     protected UnityEvent attackedEnemy;
     [Header("Sprites and Animation")]
-    [SerializeField] protected Sprite[] leftWalkSprites;
-    [SerializeField] protected Sprite[] rightWalkSprites;
-    [SerializeField] protected Sprite[] jumpingSprites;
-    [SerializeField] protected Sprite idleSprite;
+    [SerializeField] protected Sprite[] leftWalkSprites1;
+    [SerializeField] protected Sprite[] rightWalkSprites1;
+    [SerializeField] protected Sprite[] jumpingSprites1;
+    [SerializeField] protected Sprite idleSprite1;
+    
+    [SerializeField] protected Sprite[] leftWalkSprites2;
+    [SerializeField] protected Sprite[] rightWalkSprites2;
+    [SerializeField] protected Sprite[] jumpingSprites2;
+    [SerializeField] protected Sprite idleSprite2;
+
+    [SerializeField] protected Sprite[] leftWalkSprites3;
+    [SerializeField] protected Sprite[] rightWalkSprites3;
+    [SerializeField] protected Sprite[] jumpingSprites3;
+    [SerializeField] protected Sprite idleSprite3;
+
+    [SerializeField] protected Sprite[] leftWalkSprites4;
+    [SerializeField] protected Sprite[] rightWalkSprites4;
+    [SerializeField] protected Sprite[] jumpingSprites4;
+    [SerializeField] protected Sprite idleSprite4;
     [SerializeField] protected GameObject[] heartPieces;
     private int animationSpriteIndex = 0;
     private float animationUpdateRate = 0.12f;
@@ -57,7 +73,10 @@ public class Player : MonoBehaviour
     private int maxCollectedHeartPieces = 3;
     [SerializeField] protected AudioSource hitSound;
     [SerializeField] protected AudioSource attackSound;
+    [SerializeField] protected AudioSource energySound;
+    [SerializeField] protected AudioSource walkSound;
     [SerializeField] protected GameObject lostPanel;
+    int sceneNumber = 1;
 
     enum State {
         Playing,
@@ -78,10 +97,17 @@ public class Player : MonoBehaviour
         state = State.Playing;
     }
     
+
+    public void increase_sceneNumber() {
+        sceneNumber += 1;
+    }
     private void Update(){
 
         if(hitpoints <= 0){
             state = State.Lost;
+        }
+        if(collectedHeartPieces >= 4){
+            state = State.Win;
         }
 
         switch(state){
@@ -169,10 +195,10 @@ public class Player : MonoBehaviour
                 hitParticles.transform.SetLocalPositionAndRotation(new Vector3(-0.5f, 0, -1), Quaternion.Euler(0, 0, -225));
             }
             hitParticles.Play();
-            hitSound.Play();
+            hitSound.PlayDelayed(0.1f);
         }
         else {
-            attackSound.Play();
+            attackSound.PlayDelayed(0.1f);
         }
     }
 
@@ -183,9 +209,10 @@ public class Player : MonoBehaviour
             Vector2 direction = enemy.transform.position - transform.position;
             energyParticleVelocity.x = direction.x * 2;
             energyParticleVelocity.y = direction.y * 2;
-            
+            if(!energySound.isPlaying){
+                energySound.Play();
+            }
 
-            Debug.Log("touching enemy layer");
             if(energyValue < maxEnergy){
                 energyValue += incrementalEnergy;
             }
@@ -235,31 +262,91 @@ public class Player : MonoBehaviour
         }
                 
         if(inputVec == Vector2.zero){
-            spriteRenderer.sprite = idleSprite;
+            spriteRenderer.sprite = idleSprite1;
         }
         else if(facingDirection.x < 0){
             if(rb2d.velocity.y > 1) {
-                spriteRenderer.sprite = jumpingSprites[0];
+                switch(sceneNumber){
+                    case 1:
+                    spriteRenderer.sprite = jumpingSprites1[0];
+                    break;
+                    case 2:
+                    spriteRenderer.sprite = jumpingSprites2[0];
+                    break;
+                    case 3:
+                    spriteRenderer.sprite = jumpingSprites3[0];
+                    break;
+                    case 4:
+                    spriteRenderer.sprite = jumpingSprites4[0];
+                    break;
+                }
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
+            if(!walkSound.isPlaying){
+                walkSound.PlayDelayed(0.2f);
+            }
 
-            if(animationSpriteIndex >= leftWalkSprites.Length - 1){
+            if(animationSpriteIndex > leftWalkSprites1.Length - 1){
                 animationSpriteIndex = 0;
             }
-            spriteRenderer.sprite = leftWalkSprites[animationSpriteIndex++];
+            switch(sceneNumber){
+                case 1:
+                spriteRenderer.sprite = leftWalkSprites1[animationSpriteIndex];
+                break;
+                case 2:
+                spriteRenderer.sprite = leftWalkSprites2[animationSpriteIndex];
+                break;
+                case 3:
+                spriteRenderer.sprite = leftWalkSprites3[animationSpriteIndex];
+                break;
+                case 4:
+                spriteRenderer.sprite = leftWalkSprites4[animationSpriteIndex];
+                break;
+            }
+            animationSpriteIndex++;
         }
         else if(facingDirection.x > 0){
             // player right sprite
             if(rb2d.velocity.y > 1) {
-                spriteRenderer.sprite = jumpingSprites[1];
+                switch(sceneNumber){
+                    case 1:
+                    spriteRenderer.sprite = jumpingSprites1[1];
+                    break;
+                    case 2:
+                    spriteRenderer.sprite = jumpingSprites2[1];
+                    break;
+                    case 3:
+                    spriteRenderer.sprite = jumpingSprites3[1];
+                    break;
+                    case 4:
+                    spriteRenderer.sprite = jumpingSprites4[1];
+                    break;
+                }
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
-            if(animationSpriteIndex >= rightWalkSprites.Length - 1){
+            if(!walkSound.isPlaying){
+                walkSound.PlayDelayed(0.2f);
+            }
+            if(animationSpriteIndex > rightWalkSprites1.Length - 1){
                 animationSpriteIndex = 0;
             }
-            spriteRenderer.sprite = rightWalkSprites[animationSpriteIndex++];
+            switch(sceneNumber){
+                case 1:
+                spriteRenderer.sprite = rightWalkSprites1[animationSpriteIndex];
+                break;
+                case 2:
+                spriteRenderer.sprite = rightWalkSprites2[animationSpriteIndex];
+                break;
+                case 3:
+                spriteRenderer.sprite = rightWalkSprites3[animationSpriteIndex];
+                break;
+                case 4:
+                spriteRenderer.sprite = rightWalkSprites4[animationSpriteIndex];
+                break;
+            }
+            animationSpriteIndex++;
         }
         elapsedAnimationUpdateRate = 0f;
     }
