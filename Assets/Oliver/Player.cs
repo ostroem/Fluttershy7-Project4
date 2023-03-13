@@ -57,6 +57,8 @@ public class Player : MonoBehaviour
     private int maxCollectedHeartPieces = 3;
     [SerializeField] protected AudioSource hitSound;
     [SerializeField] protected AudioSource attackSound;
+    [SerializeField] protected AudioSource energySound;
+    [SerializeField] protected AudioSource walkSound;
     [SerializeField] protected GameObject lostPanel;
 
     enum State {
@@ -183,7 +185,10 @@ public class Player : MonoBehaviour
             Vector2 direction = enemy.transform.position - transform.position;
             energyParticleVelocity.x = direction.x * 2;
             energyParticleVelocity.y = direction.y * 2;
-            
+            if(!energySound.isPlaying){
+                energySound.Play();
+            }
+
             if(energyValue < maxEnergy){
                 energyValue += incrementalEnergy;
             }
@@ -241,6 +246,9 @@ public class Player : MonoBehaviour
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
+            if(!walkSound.isPlaying){
+                walkSound.Play();
+            }
 
             if(animationSpriteIndex >= leftWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
@@ -253,6 +261,9 @@ public class Player : MonoBehaviour
                 spriteRenderer.sprite = jumpingSprites[1];
                 elapsedAnimationUpdateRate = 0f;
                 return;
+            }
+            if(!walkSound.isPlaying){
+                walkSound.PlayDelayed(0.2f);
             }
             if(animationSpriteIndex >= rightWalkSprites.Length - 1){
                 animationSpriteIndex = 0;
