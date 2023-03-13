@@ -8,9 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set;}
     public SceneChange SceneChanger { get; private set; }
-
-    [Header("Player")]
-    public int hitpoints = 3;
+    private Player player;
+    [SerializeField] protected GameObject cinemaCamera;
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -21,6 +20,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
         Instance = this;
+        
         DontDestroyOnLoad(gameObject);
     }
 
@@ -31,8 +31,15 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         SceneChanger = GetComponent<SceneChange>();
-
+        player = FindObjectOfType<Player>();
         SceneManager.activeSceneChanged += OnSceneChange;
+    }
+
+    public void RestartGame() {
+        Destroy(player.gameObject);
+        Destroy(gameObject);
+        Destroy(cinemaCamera);
+        SceneManager.LoadScene(0);
     }
 
     /// <summary>
