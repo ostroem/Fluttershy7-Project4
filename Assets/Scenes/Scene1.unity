@@ -11309,7 +11309,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1987138234}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.32, y: -2.28, z: 0}
+  m_LocalPosition: {x: 3.32, y: -2.37, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11966,16 +11966,28 @@ MonoBehaviour:
   hitParticles: {fileID: 1976888495}
   collisionRadius: 1
   energyRadius: 2
-  leftWalkSprites:
+  leftWalkSprites1:
   - {fileID: 21300000, guid: 721254eb5d0ed3346b7b5556bd5d5ed5, type: 3}
   - {fileID: 21300000, guid: 42e563f7a2a562a4e8aa38632a0a40ab, type: 3}
-  rightWalkSprites:
+  rightWalkSprites1:
   - {fileID: 21300000, guid: ab294a6acdf11f346912430ffbd90e2d, type: 3}
   - {fileID: 21300000, guid: 7f85690e531dc8c4581bc8f0d0aeb9f6, type: 3}
-  jumpingSprites:
+  jumpingSprites1:
   - {fileID: 21300000, guid: 89814b9b6cb49d14fb48bf8bf6978ba7, type: 3}
   - {fileID: 21300000, guid: c20b4ea4af7ae7842ad6df7597296e03, type: 3}
-  idleSprite: {fileID: 21300000, guid: d160b476254cb4842a8c975b7a2ae5de, type: 3}
+  idleSprite1: {fileID: 21300000, guid: d160b476254cb4842a8c975b7a2ae5de, type: 3}
+  leftWalkSprites2: []
+  rightWalkSprites2: []
+  jumpingSprites2: []
+  idleSprite2: {fileID: 0}
+  leftWalkSprites3: []
+  rightWalkSprites3: []
+  jumpingSprites3: []
+  idleSprite3: {fileID: 0}
+  leftWalkSprites4: []
+  rightWalkSprites4: []
+  jumpingSprites4: []
+  idleSprite4: {fileID: 0}
   heartPieces:
   - {fileID: 1836618673780050064}
   - {fileID: 3180688628456479499}
