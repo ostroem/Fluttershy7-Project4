@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneChange(Scene sc, Scene sc1) {
         SceneChanger = GetComponent<SceneChange>();
+        player.increase_sceneNumber();
     }
 
 
