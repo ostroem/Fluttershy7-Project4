@@ -20,12 +20,23 @@ public class ShadowHands : Enemy
     Vector2 playerPos;
     Vector2 facingDirection;
     Player player;
+    
+    [SerializeField]protected Sprite[] leftSprites;
+    [SerializeField]protected Sprite[] rightSprites;
+    private SpriteRenderer spriteRenderer;
+    private int animationSpriteIndex;
+    private float animationUpdateRate = 0.32f;
+    private float elapsedAnimationUpdateRate = 0f;
+    private Animator animator;
+
 
 /// <summary>
 /// Awake is called when the script instance is being loaded.
 /// </summary>
 void Awake()
 {
+    spriteRenderer = GetComponent<SpriteRenderer>();
+    animator = GetComponent<Animator>();
     player = FindObjectOfType<Player>();
     attackEvent += attack;
 }
@@ -37,6 +48,7 @@ void Awake()
         if(hitpoints <= 0){
             Destroy(this.gameObject);
         }
+        elapsedAnimationUpdateRate += Time.deltaTime;
         elapsedTime += Time.deltaTime;
         switch(state){
             case State.Idle:
@@ -48,6 +60,7 @@ void Awake()
             }
             break;
             case State.Attack:
+            animator.SetTrigger("attacking");
             if(elapsedTime >= attackDelay){
                 if(sense_player(attackRadius)){
                     attackEvent();
@@ -57,6 +70,7 @@ void Awake()
             }
             break;
         }
+        update_sprites();
     }
 
     private bool sense_player(float radius){
@@ -68,33 +82,52 @@ void Awake()
             return true;
         }
         playerPos = transform.position;
-        update_facing_direction();
         return false;
     }
 
     private void update_facing_direction() {
-        if(playerPos == (Vector2)transform.position){
-            facingDirection.x = UnityEngine.Random.Range(-1, 2);
-            return;
-        }
         facingDirection.x = playerPos.x - transform.position.x;
         facingDirection.Normalize();
-
-        if(facingDirection.x < 0){
-            GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        if(facingDirection.x > 0){
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        }
+        animator.SetFloat("directionX", facingDirection.x);
     }
     private void attack() {
         player.take_damage(1);
     }
 
-    /// <summary>
-    /// Callback to draw gizmos that are pickable and always drawn.
-    /// </summary>
-    void OnDrawGizmos()
+    private void update_sprites() {
+        if(elapsedAnimationUpdateRate < animationUpdateRate){
+            return;
+        }
+
+        if(facingDirection == Vector2.left){
+            if(state != State.Attack){
+                spriteRenderer.sprite = leftSprites[0];
+                elapsedAnimationUpdateRate = 0f;
+                return;
+            }
+/*             spriteRenderer.sprite = leftSprites[animationSpriteIndex++];
+            if(animationSpriteIndex >= leftSprites.Length) {
+                animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
+                return;
+            } */
+        }
+        else if(facingDirection == Vector2.right){
+            if(state != State.Attack){
+                spriteRenderer.sprite = rightSprites[0];
+                elapsedAnimationUpdateRate = 0f;
+                return;
+            }
+/*             spriteRenderer.sprite = rightSprites[animationSpriteIndex++];
+            if(animationSpriteIndex >= rightSprites.Length){
+                animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
+                return;
+            } */
+        }
+    }
+
+    void OnDrawGizmosSelected()
     {
         if(state == State.Attack){
             Gizmos.color = Color.red;

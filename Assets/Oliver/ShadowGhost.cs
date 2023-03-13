@@ -58,7 +58,8 @@ public class ShadowGhost : Enemy
                     return;
                 }
                 state = State.Wander;
-                facingDirection.x = UnityEngine.Random.Range(-1, 2);
+                //facingDirection.x = UnityEngine.Random.Range(-1, 2);
+                update_facing_direction();
                 elapsedTime = 0f;
             }
             break;
@@ -92,7 +93,7 @@ public class ShadowGhost : Enemy
     }
     private bool sense_player(float radius){
         LayerMask playerMask = LayerMask.GetMask("Player");
-        Collider2D player = Physics2D.OverlapCircle(transform.position, radius, playerMask);
+        Collider2D player = Physics2D.OverlapCircle((Vector2)transform.position + facingDirection, radius, playerMask);
         if(player){
             playerPos = player.transform.position;
             update_facing_direction();
@@ -111,11 +112,8 @@ public class ShadowGhost : Enemy
         facingDirection.x = playerPos.x - transform.position.x;
         facingDirection.Normalize();
     }
-
-    /// <summary>
-    /// Callback to draw gizmos that are pickable and always drawn.
-    /// </summary>
-    void OnDrawGizmos()
+    
+    void OnDrawGizmosSelected()
     {
         if(state == State.Attack){
             Gizmos.color = Color.red;
@@ -129,6 +127,10 @@ public class ShadowGhost : Enemy
     }
 
     private void update_sprites() {
+        if(elapsedAnimationUpdateRate < animationUpdateRate){
+            return;
+        }
+
         if(state == State.Idle){
             spriteRenderer.sprite = idleSprite;
         }
@@ -136,6 +138,7 @@ public class ShadowGhost : Enemy
             spriteRenderer.sprite = leftSprites[animationSpriteIndex];
             if(animationSpriteIndex >= leftSprites.Length - 1){
                 animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
                 return;
             }
             animationSpriteIndex ++;
@@ -144,6 +147,7 @@ public class ShadowGhost : Enemy
             spriteRenderer.sprite = rightSprites[animationSpriteIndex];
             if(animationSpriteIndex >= rightSprites.Length - 1){
                 animationSpriteIndex = 0;
+                elapsedAnimationUpdateRate = 0f;
                 return;
             }
             animationSpriteIndex ++;

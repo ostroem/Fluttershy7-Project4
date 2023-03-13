@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2891911659590370265}
   - component: {fileID: 2891911659590370264}
   - component: {fileID: 2891911659590370267}
+  - component: {fileID: 1686430953}
   m_Layer: 7
   m_Name: ShadowHands
   m_TagString: Untagged
@@ -26,8 +27,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2891911659590370261}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: -3.5, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.51, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74,9 +75,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_SortingOrder: 2
+  m_Sprite: {fileID: 21300000, guid: ebdb60e6b8b499f4aba937c2a1081d5e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -99,24 +100,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitpoints: 3
-  attackEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6390007486066684546, guid: 5632fd8a0b2a20d4d84039012d1587f3, type: 3}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: take_damage
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   attackDelay: 1.5
   visionRadius: 2
   attackRadius: 1
+  leftSprites:
+  - {fileID: 21300000, guid: ebdb60e6b8b499f4aba937c2a1081d5e, type: 3}
+  - {fileID: 21300000, guid: 88f7a613e7c3559439c1d9f365109b55, type: 3}
+  - {fileID: 21300000, guid: 409e8a43d5d58b44e94d0a9949eccd6f, type: 3}
+  - {fileID: 21300000, guid: e19b9b462a419e8449b2ebcebdafe47f, type: 3}
+  rightSprites:
+  - {fileID: 21300000, guid: 1047e433d1266134f9173ec6ee5d8e36, type: 3}
+  - {fileID: 21300000, guid: 0d962abf712765848b0db4bb9a70632b, type: 3}
+  - {fileID: 21300000, guid: ff55a429fe3a89e489472c769f6936e2, type: 3}
+  - {fileID: 21300000, guid: f97f92f320655f24c9c9f8ac6985793a, type: 3}
 --- !u!61 &2891911659590370267
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -143,3 +139,23 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &1686430953
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2891911659590370261}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a47e68fd326b19346b976127812cae34, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
