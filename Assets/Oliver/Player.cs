@@ -184,8 +184,6 @@ public class Player : MonoBehaviour
             energyParticleVelocity.x = direction.x * 2;
             energyParticleVelocity.y = direction.y * 2;
             
-
-            Debug.Log("touching enemy layer");
             if(energyValue < maxEnergy){
                 energyValue += incrementalEnergy;
             }
