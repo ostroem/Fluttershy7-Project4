@@ -5,9 +5,9 @@ using UnityEngine.Events;
 public class ShadowHands : Enemy
 {
     private Action attackEvent;
-    [SerializeField] public float attackDelay = 1.5f;
-    [SerializeField] protected float visionRadius = 2f;
-    [SerializeField] protected float attackRadius = 1f;
+    public float attackDelay = 1.5f;
+    protected float visionRadius = 2f;
+    protected float attackRadius = 1f;
 
     enum State {
         Idle,
@@ -15,7 +15,8 @@ public class ShadowHands : Enemy
     }
 
     private float idleUpdateFreq = 0.25f;
-    private float elapsedTime = 0f;
+    private float elapsedAttackTime = 0f;
+    private float elapsedIdleTime = 0f;
     State state = State.Idle;
     Vector2 playerPos;
     Vector2 facingDirection;
@@ -49,24 +50,25 @@ void Awake()
             Destroy(this.gameObject);
         }
         elapsedAnimationUpdateRate += Time.deltaTime;
-        elapsedTime += Time.deltaTime;
         switch(state){
             case State.Idle:
-            if(elapsedTime >= idleUpdateFreq){
+            elapsedIdleTime += Time.deltaTime;
+            if(elapsedIdleTime >= idleUpdateFreq){
                 if(sense_player(visionRadius)){
                     state = State.Attack;
                 }
-                elapsedTime = 0f;
+                elapsedIdleTime = 0f;
             }
             break;
             case State.Attack:
+            elapsedAttackTime += Time.deltaTime;
             animator.SetTrigger("attacking");
-            if(elapsedTime >= attackDelay){
+            if(elapsedAttackTime >= attackDelay){
                 if(sense_player(attackRadius)){
                     attackEvent();
                 }
                 state = State.Idle;
-                elapsedTime = 0f;
+                elapsedAttackTime = 0f;
             }
             break;
         }
@@ -98,19 +100,12 @@ void Awake()
         if(elapsedAnimationUpdateRate < animationUpdateRate){
             return;
         }
-
         if(facingDirection == Vector2.left){
             if(state != State.Attack){
                 spriteRenderer.sprite = leftSprites[0];
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
-/*             spriteRenderer.sprite = leftSprites[animationSpriteIndex++];
-            if(animationSpriteIndex >= leftSprites.Length) {
-                animationSpriteIndex = 0;
-                elapsedAnimationUpdateRate = 0f;
-                return;
-            } */
         }
         else if(facingDirection == Vector2.right){
             if(state != State.Attack){
@@ -118,24 +113,6 @@ void Awake()
                 elapsedAnimationUpdateRate = 0f;
                 return;
             }
-/*             spriteRenderer.sprite = rightSprites[animationSpriteIndex++];
-            if(animationSpriteIndex >= rightSprites.Length){
-                animationSpriteIndex = 0;
-                elapsedAnimationUpdateRate = 0f;
-                return;
-            } */
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if(state == State.Attack){
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(transform.position, attackRadius);
-        }
-        else {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(transform.position, visionRadius);
         }
     }
 }

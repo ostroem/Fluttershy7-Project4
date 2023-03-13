@@ -75,6 +75,7 @@ public class Player : MonoBehaviour
     [SerializeField] protected AudioSource attackSound;
     [SerializeField] protected AudioSource energySound;
     [SerializeField] protected AudioSource walkSound;
+    [SerializeField] protected AudioSource collectSound;
     [SerializeField] protected GameObject lostPanel;
     int sceneNumber = 1;
 
@@ -154,6 +155,7 @@ public class Player : MonoBehaviour
         if(other.collider.CompareTag("HeartPiece")){
             // display the new heart
             heartPieces[collectedHeartPieces].SetActive(true);
+            collectSound.PlayDelayed(0.1f);
             //increase var for collected heart pieces
             if(collectedHeartPieces < maxCollectedHeartPieces){
                 collectedHeartPieces++;
@@ -262,7 +264,20 @@ public class Player : MonoBehaviour
         }
                 
         if(inputVec == Vector2.zero){
-            spriteRenderer.sprite = idleSprite1;
+            switch(sceneNumber){
+                case 1:
+                spriteRenderer.sprite = idleSprite1;
+                break;
+                case 2:
+                spriteRenderer.sprite = idleSprite2;
+                break;
+                case 3:
+                spriteRenderer.sprite = idleSprite3;
+                break;
+                case 4:
+                spriteRenderer.sprite = idleSprite4;
+                break;
+            }
         }
         else if(facingDirection.x < 0){
             if(rb2d.velocity.y > 1) {

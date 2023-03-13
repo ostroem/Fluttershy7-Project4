@@ -8,7 +8,7 @@ public class ShadowGhost : Enemy
 {
     private Action attackEvent;
     [SerializeField] protected Vector2 facingDirection = Vector2.left;
-    [SerializeField] public float attackDelay = 1.5f;
+    private float attackDelay = 2f;
     [SerializeField] protected float wanderDuration = 1.5f;
     private float currentWanderDuration = 0f;
     enum State {
@@ -18,7 +18,8 @@ public class ShadowGhost : Enemy
     }
 
     private float idleUpdateFreq = 0.25f;
-    private float elapsedTime = 0f;
+    private float elapsedAttackTime = 0f;
+    private float elapsedIdleTime = 0f;
     [SerializeField] protected float visionRadius = 1f;
     [SerializeField] protected float attackRadius = 1.5f;
     State state;
@@ -48,11 +49,11 @@ public class ShadowGhost : Enemy
         if(hitpoints <= 0){
             Destroy(this.gameObject);
         }
-        elapsedTime += Time.deltaTime;
         elapsedAnimationUpdateRate += Time.deltaTime;
         switch(state){
             case State.Idle:
-            if(elapsedTime >= idleUpdateFreq){
+            elapsedIdleTime += Time.deltaTime;
+            if(elapsedIdleTime >= idleUpdateFreq){
                 if(sense_player(visionRadius)){
                     state = State.Attack;
                     return;
@@ -60,7 +61,7 @@ public class ShadowGhost : Enemy
                 state = State.Wander;
                 //facingDirection.x = UnityEngine.Random.Range(-1, 2);
                 update_facing_direction();
-                elapsedTime = 0f;
+                elapsedIdleTime = 0f;
             }
             break;
             case State.Wander:
@@ -73,13 +74,13 @@ public class ShadowGhost : Enemy
             transform.position = Vector2.Lerp(transform.position, (Vector2)transform.position + facingDirection, Time.deltaTime * 1f);
             break;
             case State.Attack:
-
-            if(elapsedTime >= attackDelay){
+            elapsedAttackTime += Time.deltaTime;
+            if(elapsedAttackTime >= attackDelay){
                 if(sense_player(attackRadius)){
                     attackEvent();
                 }
                 state = State.Idle;
-                elapsedTime = 0f;
+                elapsedAttackTime = 0f;
             }
             Vector2 newPos = new Vector2(playerPos.x + facingDirection.x, playerPos.y + 1f);
             transform.position = Vector2.Lerp(transform.position, newPos, Time.deltaTime * 1f);
@@ -112,19 +113,7 @@ public class ShadowGhost : Enemy
         facingDirection.x = playerPos.x - transform.position.x;
         facingDirection.Normalize();
     }
-    
-    void OnDrawGizmosSelected()
-    {
-        if(state == State.Attack){
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(transform.position, attackRadius);
-        }
-        else {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(transform.position, visionRadius);
-        }
 
-    }
 
     private void update_sprites() {
         if(elapsedAnimationUpdateRate < animationUpdateRate){
