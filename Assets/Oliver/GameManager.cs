@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
         Destroy(player.gameObject);
         Destroy(gameObject);
         Destroy(cinemaCamera);
+        SceneChange.currentActiveSceneIndex = 0;
         SceneManager.LoadScene(0);
     }
 
