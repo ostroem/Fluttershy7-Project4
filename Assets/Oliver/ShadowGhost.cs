@@ -20,8 +20,8 @@ public class ShadowGhost : Enemy
     private float idleUpdateFreq = 0.25f;
     private float elapsedAttackTime = 0f;
     private float elapsedIdleTime = 0f;
-    [SerializeField] protected float visionRadius = 1f;
-    [SerializeField] protected float attackRadius = 1.5f;
+    protected float visionRadius = 2.5f;
+    protected float attackRadius = 1.25f;
     State state;
     private Vector2 playerPos;
     Player player;

@@ -1373,8 +1373,6 @@ MonoBehaviour:
   hitpoints: 3
   facingDirection: {x: -1, y: 0}
   wanderDuration: 1.5
-  visionRadius: 4
-  attackRadius: 1.5
   leftSprites:
   - {fileID: 21300000, guid: 7b04489cfc44e86429965e7ab66d09c4, type: 3}
   - {fileID: 21300000, guid: b496358f0df809141a09b3dc736cdc7d, type: 3}

@@ -26,10 +26,10 @@ public class Player : MonoBehaviour
 
     [Header("Combat")]
     [SerializeField] float attackRadius = 0.5f;
-    private float energyValue = 50f;
+    private float energyValue = 60f;
     private float maxEnergy = 100f;
-    private float incrementalEnergy = 0.2f;
-    private float decrementalEnergy = 6.0f;
+    private float incrementalEnergy = 0.5f;
+    private float decrementalEnergy = 5.0f;
     [SerializeField] private int hitpoints = 3;
     
     private CircleCollider2D energyCollider;

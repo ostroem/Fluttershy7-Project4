@@ -6,8 +6,8 @@ public class ShadowHands : Enemy
 {
     private Action attackEvent;
     public float attackDelay = 1.5f;
-    protected float visionRadius = 2f;
-    protected float attackRadius = 1f;
+    protected float visionRadius = 1.25f;
+    protected float attackRadius = 0.5f;
 
     enum State {
         Idle,

@@ -52,4 +52,4 @@ MonoBehaviour:
   minRangeY: -1.5
   maxRangeX: 3.5
   maxRangeY: 1.6
-  groundY: -2.9
+  groundY: -3
